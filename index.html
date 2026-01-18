@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Family Chaos Engine</title>
+<title>Family Chaos Roulette</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -60,9 +60,9 @@
     display: none;
     max-width: 90%;
     color: #fff;
-    background: linear-gradient(135deg, #ff004c, #ff8a00, #ffe600);
+    background: linear-gradient(135deg, #ff004c, #ff8a00, #ffe600, #00ffea);
     background-size: 600% 600%;
-    box-shadow: 0 0 30px #ff004c, 0 0 60px #ff8a00, 0 0 90px #ffe600;
+    box-shadow: 0 0 30px #ff004c, 0 0 60px #ff8a00, 0 0 90px #ffe600, 0 0 120px #00ffea;
     animation: glow 5s ease infinite;
   }
 
@@ -112,9 +112,8 @@ const db = firebase.firestore();
 let currentPicker = "";
 const familyMembers = ['Dad','Mum','Dan','Nevaeh','Arley','Colby'];
 
-// ALL EVENTS
+// ALL EVENTS (big + minor)
 const chaosEvents = [
-  // Big events
   "Dance Break – everyone dances 30 seconds!",
   "Silly Voices – talk like a robot for 1 minute!",
   "Freeze! – nobody move for 10 seconds!",
@@ -176,7 +175,7 @@ const chaosEvents = [
   "Say your name backwards!",
   "Make a funny animal noise!",
   "Pretend to be a pirate for 10 seconds!",
-  "Do a silly dance with the person next to you!",
+  "Do a silly dance with someone!",
   "Give a high-five to someone randomly!",
   "Pretend to be a statue!",
   "Do 5 jumping jacks!",
@@ -223,25 +222,15 @@ function pick(name) {
   document.getElementById("homeBtn").style.display = "inline-block";
 }
 
-// PICK RANDOM PARTICIPANTS
-function pickRandomParticipants(eventText) {
-  let participants = [];
-  if(eventText.includes("someone") || eventText.includes("person")) {
-    // pick 1 random member not currentPicker
-    const others = familyMembers.filter(m => m !== currentPicker);
-    participants.push(others[Math.floor(Math.random()*others.length)]);
-  } else if(eventText.includes("everyone")) {
-    participants = [...familyMembers];
-  } else if(eventText.includes("battle") || eventText.includes("challenge")) {
-    // pick 1–2 others
-    const others = familyMembers.filter(m => m !== currentPicker);
-    const shuffled = others.sort(() => 0.5 - Math.random());
-    participants.push(shuffled[0]);
-    if(shuffled[1] && Math.random() < 0.5) participants.push(shuffled[1]);
-  } else {
-    participants.push(currentPicker);
-  }
-  return participants.join(" & ");
+// PICK RANDOM PARTICIPANTS — Chaos Roulette
+function pickRandomParticipants() {
+  const r = Math.random();
+  let numParticipants;
+  if(r < 0.05) numParticipants = familyMembers.length; // 5% chance everyone
+  else numParticipants = Math.floor(Math.random() * 3) + 1;  // 1–3 members
+
+  const shuffled = [...familyMembers].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, numParticipants).join(" & ");
 }
 
 // TRIGGER CHAOS
@@ -250,15 +239,14 @@ function triggerChaos() {
 
   // Pick random event
   const randomIndex = Math.floor(Math.random() * chaosEvents.length);
-  let chaosText = chaosEvents[randomIndex];
+  const eventText = chaosEvents[randomIndex];
 
-  // Pick participants if needed
-  const assigned = pickRandomParticipants(chaosText);
-  chaosText = chaosText + " → " + assigned;
+  // Pick participants randomly
+  const participants = pickRandomParticipants();
 
-  // Show event in big card
+  // Show event
   const box = document.getElementById("eventBox");
-  box.innerText = chaosText;
+  box.innerText = eventText + " → " + participants;
   box.style.display = "block";
 
   // Hide CHAOS button
@@ -267,7 +255,7 @@ function triggerChaos() {
   // Update Firestore
   db.collection("state").doc("global").set({
     currentPicker: currentPicker,
-    activeChaos: chaosText,
+    activeChaos: eventText + " → " + participants,
     cooldownUntil: Date.now() + 60000
   }, { merge: true });
 
