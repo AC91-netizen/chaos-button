@@ -14,8 +14,12 @@
       padding: 20px;
     }
 
+    h1 {
+      margin-bottom: 20px;
+    }
+
     button {
-      font-size: 1.4em;
+      font-size: 1.3em;
       padding: 15px 25px;
       margin: 10px;
       border-radius: 8px;
@@ -24,11 +28,34 @@
     }
 
     .name-btn { background: #333; color: white; }
+
     #chaosBtn {
       display: none;
       background: red;
       font-size: 2em;
       margin-top: 30px;
+      padding: 20px 30px;
+    }
+
+    #homeBtn {
+      display: none;
+      background: #555;
+      color: white;
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin-top: 20px;
+    }
+
+    #eventBox {
+      margin-top: 40px;
+      font-size: 2em;
+      font-weight: bold;
+      padding: 20px;
+      border: 3px solid yellow;
+      border-radius: 12px;
+      display: none;
+      background: #222;
+      color: #ff0;
     }
   </style>
 </head>
@@ -47,8 +74,11 @@
 </div>
 
 <button id="chaosBtn" onclick="triggerChaos()">🔥 CHAOS 🔥</button>
+<button id="homeBtn" onclick="goHome()">🏠 HOME</button>
 
-<!-- Firebase SDKs (COMPAT) -->
+<div id="eventBox"></div>
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -67,19 +97,85 @@ const db = firebase.firestore();
 
 let currentPicker = "";
 
+// RANDOM CHAOS EVENTS (tons of them)
+const chaosEvents = [
+  "Dance Break – 30 seconds!",
+  "Silly Voices – talk like a robot for 1 minute!",
+  "Freeze! – nobody move for 10 seconds!",
+  "Dad Chooses Music – play a song!",
+  "Nevaeh’s Joke Time – tell a joke!",
+  "Arley’s Nerf Attack – 1 minute!",
+  "Colby Challenge – make a funny face!",
+  "Flashlight Tag – lights out!",
+  "Sing the Alphabet Backwards!",
+  "Shadow Puppets Contest!",
+  "Spin Around 5 Times!",
+  "Jump Like a Kangaroo!",
+  "Laugh Out Loud Challenge!",
+  "Balance on One Foot – 20 seconds!",
+  "Imitate Your Favorite Animal!",
+  "Silent Dance – no sound allowed!",
+  "Pillow Tower Race!",
+  "Fastest Clap Competition!",
+  "Sock Slide Challenge!",
+  "Mystery Snack Time – choose blindly!",
+  "Freeze Frame Pose!",
+  "March Like a Parade!",
+  "Funny Walk Across the Room!",
+  "Make Up a Short Rap!",
+  "Draw a Crazy Monster in the Air!",
+  "Hop Like a Bunny!",
+  "Handstand Challenge!",
+  "Giggle Attack!",
+  "Spin a Story Challenge!",
+  "Tongue Twister Contest!",
+  "Dance Like No One’s Watching!",
+  "Imitate a Famous Character!",
+  "Sing a Random Song Line!",
+  "Funny Face Selfie Time!",
+  "Robot Dance Battle!",
+  "Mime a Scene from a Movie!",
+  "Pretend to Be a Superhero!",
+  "Make a Silly Hat from Anything!",
+  "Quick Freeze and Pose!",
+  "Hop on One Foot While Singing!",
+  "Backwards Walk Challenge!",
+  "Whistle a Tune Contest!",
+  "Fastest Finger Clap!",
+  "Spin and Touch the Ground!",
+  "Improv Joke Time!",
+  "Act Like Your Favorite Pet!",
+  "Silly March Around the Room!"
+];
+
+// PICK A NAME
 function pick(name) {
   currentPicker = name;
   document.getElementById("title").innerText =
     "IDENTITY CONFIRMED: " + name.toUpperCase();
+
+  // Hide all names for dramatic effect
+  document.getElementById("names").style.display = "none";
+
+  // Show chaos button and home button
   document.getElementById("chaosBtn").style.display = "inline-block";
+  document.getElementById("homeBtn").style.display = "inline-block";
 }
 
+// TRIGGER CHAOS
 function triggerChaos() {
   if (!currentPicker) return;
 
-  const chaosText = "CHAOS ACTIVATED BY " + currentPicker;
+  // Pick random event
+  const randomIndex = Math.floor(Math.random() * chaosEvents.length);
+  const chaosText = chaosEvents[randomIndex];
 
-  // Update shared global state
+  // Show it in big event box
+  const box = document.getElementById("eventBox");
+  box.innerText = chaosText + " (" + currentPicker + ")";
+  box.style.display = "block";
+
+  // Update Firestore global state
   db.collection("state").doc("global").set({
     currentPicker: currentPicker,
     activeChaos: chaosText,
@@ -91,8 +187,16 @@ function triggerChaos() {
     count: firebase.firestore.FieldValue.increment(1),
     lastActivated: new Date()
   }, { merge: true });
+}
 
-  alert("🔥 " + chaosText + " 🔥");
+// GO HOME / RESET
+function goHome() {
+  currentPicker = "";
+  document.getElementById("title").innerText = "WHO ARE YOU?";
+  document.getElementById("names").style.display = "block";
+  document.getElementById("chaosBtn").style.display = "none";
+  document.getElementById("homeBtn").style.display = "none";
+  document.getElementById("eventBox").style.display = "none";
 }
 </script>
 
