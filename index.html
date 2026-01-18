@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Family Chaos Engine</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Family Chaos Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+  }
 
-    h1 {
-      margin-bottom: 20px;
-    }
+  h1 {
+    margin-bottom: 20px;
+  }
 
-    button {
-      font-size: 1.3em;
-      padding: 15px 25px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-    }
+  button {
+    font-size: 1.3em;
+    padding: 15px 25px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+  }
 
-    .name-btn { background: #333; color: white; }
+  button:hover {
+    transform: scale(1.05);
+  }
 
-    #chaosBtn {
-      display: none;
-      background: red;
-      font-size: 2em;
-      margin-top: 30px;
-      padding: 20px 30px;
-    }
+  .name-btn { background: #333; color: white; }
 
-    #homeBtn {
-      display: none;
-      background: #555;
-      color: white;
-      font-size: 1.2em;
-      padding: 10px 20px;
-      margin-top: 20px;
-    }
+  #chaosBtn {
+    display: none;
+    background: red;
+    font-size: 2em;
+    margin-top: 30px;
+    padding: 20px 30px;
+  }
 
-    #eventBox {
-      margin-top: 40px;
-      font-size: 2em;
-      font-weight: bold;
-      padding: 20px;
-      border: 3px solid yellow;
-      border-radius: 12px;
-      display: none;
-      background: #222;
-      color: #ff0;
-    }
-  </style>
+  #homeBtn {
+    display: none;
+    background: #555;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin-top: 20px;
+  }
+
+  #eventBox {
+    margin: 50px auto 0 auto;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 40px 30px;
+    border-radius: 15px;
+    display: none;
+    max-width: 90%;
+    color: #fff;
+    background: linear-gradient(135deg, #ff004c, #ff8a00, #ffe600);
+    background-size: 600% 600%;
+    box-shadow: 0 0 30px #ff004c, 0 0 60px #ff8a00, 0 0 90px #ffe600;
+    animation: glow 5s ease infinite;
+  }
+
+  @keyframes glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
 </head>
 
 <body>
@@ -96,10 +110,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let currentPicker = "";
+const familyMembers = ['Dad','Mum','Dan','Nevaeh','Arley','Colby'];
 
-// RANDOM CHAOS EVENTS (tons of them)
+// ALL EVENTS
 const chaosEvents = [
-  "Dance Break – 30 seconds!",
+  // Big events
+  "Dance Break – everyone dances 30 seconds!",
   "Silly Voices – talk like a robot for 1 minute!",
   "Freeze! – nobody move for 10 seconds!",
   "Dad Chooses Music – play a song!",
@@ -145,7 +161,56 @@ const chaosEvents = [
   "Spin and Touch the Ground!",
   "Improv Joke Time!",
   "Act Like Your Favorite Pet!",
-  "Silly March Around the Room!"
+  "Silly March Around the Room!",
+  // 50+ minor random events
+  "Do a silly handshake with someone!",
+  "Tell a funny secret to someone!",
+  "Spin around twice and freeze!",
+  "Hop on one foot for 5 seconds!",
+  "Make a silly face selfie!",
+  "Pretend to juggle invisible balls!",
+  "Do a dramatic bow!",
+  "Act like your favorite superhero!",
+  "Mime a scene from a movie!",
+  "Do a robot walk across the room!",
+  "Say your name backwards!",
+  "Make a funny animal noise!",
+  "Pretend to be a pirate for 10 seconds!",
+  "Do a silly dance with the person next to you!",
+  "Give a high-five to someone randomly!",
+  "Pretend to be a statue!",
+  "Do 5 jumping jacks!",
+  "Make up a new handshake!",
+  "Do a silly spin!",
+  "Pretend to tiptoe across the room!",
+  "Make a funny sound effect!",
+  "Pretend to fly like a superhero!",
+  "Do a slow-motion walk!",
+  "Act like a character from a cartoon!",
+  "Make a shadow puppet for 5 seconds!",
+  "Pretend to be invisible!",
+  "Give a dramatic cheer!",
+  "Do a silly crawl on the floor!",
+  "Pretend to eat a huge ice cream!",
+  "Act like your favorite animal!",
+  "Make up a funny story in 10 seconds!",
+  "Do a silly stretch!",
+  "Pretend to ride an invisible bike!",
+  "Give a pretend award to someone!",
+  "Act like a robot for 5 seconds!",
+  "Make a funny hat out of anything nearby!",
+  "Do a silly walk across the room!",
+  "Pretend to sneeze loudly!",
+  "Do a funny wiggle dance!",
+  "Pretend to juggle invisible items!",
+  "Make a dramatic movie pose!",
+  "Act like a ninja!",
+  "Do a silly wave!",
+  "Pretend to slide across the floor!",
+  "Make a funny sound and point to someone!",
+  "Do a fake faint dramatic pose!",
+  "Pretend to ride a horse!",
+  "Do a funny stomp dance!"
 ];
 
 // PICK A NAME
@@ -153,50 +218,73 @@ function pick(name) {
   currentPicker = name;
   document.getElementById("title").innerText =
     "IDENTITY CONFIRMED: " + name.toUpperCase();
-
-  // Hide all names for dramatic effect
   document.getElementById("names").style.display = "none";
-
-  // Show chaos button and home button
   document.getElementById("chaosBtn").style.display = "inline-block";
   document.getElementById("homeBtn").style.display = "inline-block";
 }
 
+// PICK RANDOM PARTICIPANTS
+function pickRandomParticipants(eventText) {
+  let participants = [];
+  if(eventText.includes("someone") || eventText.includes("person")) {
+    // pick 1 random member not currentPicker
+    const others = familyMembers.filter(m => m !== currentPicker);
+    participants.push(others[Math.floor(Math.random()*others.length)]);
+  } else if(eventText.includes("everyone")) {
+    participants = [...familyMembers];
+  } else if(eventText.includes("battle") || eventText.includes("challenge")) {
+    // pick 1–2 others
+    const others = familyMembers.filter(m => m !== currentPicker);
+    const shuffled = others.sort(() => 0.5 - Math.random());
+    participants.push(shuffled[0]);
+    if(shuffled[1] && Math.random() < 0.5) participants.push(shuffled[1]);
+  } else {
+    participants.push(currentPicker);
+  }
+  return participants.join(" & ");
+}
+
 // TRIGGER CHAOS
 function triggerChaos() {
-  if (!currentPicker) return;
+  if(!currentPicker) return;
 
   // Pick random event
   const randomIndex = Math.floor(Math.random() * chaosEvents.length);
-  const chaosText = chaosEvents[randomIndex];
+  let chaosText = chaosEvents[randomIndex];
 
-  // Show it in big event box
+  // Pick participants if needed
+  const assigned = pickRandomParticipants(chaosText);
+  chaosText = chaosText + " → " + assigned;
+
+  // Show event in big card
   const box = document.getElementById("eventBox");
-  box.innerText = chaosText + " (" + currentPicker + ")";
+  box.innerText = chaosText;
   box.style.display = "block";
 
-  // Update Firestore global state
+  // Hide CHAOS button
+  document.getElementById("chaosBtn").style.display = "none";
+
+  // Update Firestore
   db.collection("state").doc("global").set({
     currentPicker: currentPicker,
     activeChaos: chaosText,
-    cooldownUntil: Date.now() + 60000 // 1-minute cooldown
+    cooldownUntil: Date.now() + 60000
   }, { merge: true });
 
-  // Increment stats for this user
   db.collection("stats").doc(currentPicker).set({
     count: firebase.firestore.FieldValue.increment(1),
     lastActivated: new Date()
   }, { merge: true });
 }
 
-// GO HOME / RESET
+// GO HOME
 function goHome() {
   currentPicker = "";
   document.getElementById("title").innerText = "WHO ARE YOU?";
   document.getElementById("names").style.display = "block";
   document.getElementById("chaosBtn").style.display = "none";
-  document.getElementById("homeBtn").style.display = "none";
   document.getElementById("eventBox").style.display = "none";
+  document.getElementById("homeBtn").style.display = "none";
 }
 </script>
 
