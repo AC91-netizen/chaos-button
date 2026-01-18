@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Family Chaos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial; text-align: center; background: #111; color: white; }
+    button { font-size: 1.5em; padding: 20px; margin: 10px; }
+    #chaos { background: red; display: none; }
+  </style>
+</head>
+<body>
+
+<h1>WHO ARE YOU?</h1>
+
+<div id="names">
+  <button onclick="pick('Dad')">Dad</button>
+  <button onclick="pick('Mum')">Mum</button>
+  <button onclick="pick('Dan')">Dan</button>
+  <button onclick="pick('Nevaeh')">Nevaeh</button>
+  <button onclick="pick('Arley')">Arley</button>
+  <button onclick="pick('Colby')">Colby</button>
+</div>
+
+<button id="chaos" onclick="chaos()">🔥 CHAOS 🔥</button>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  // YOU WILL ADD THIS NEXT
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let picker = "";
+
+function pick(name) {
+  picker = name;
+  document.getElementById("chaos").style.display = "block";
+}
+
+function chaos() {
+  alert("CHAOS ACTIVATED BY " + picker);
+}
+</script>
+
+</body>
+</html>
