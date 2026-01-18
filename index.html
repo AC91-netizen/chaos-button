@@ -48,7 +48,7 @@
 
 <button id="chaosBtn" onclick="triggerChaos()">🔥 CHAOS 🔥</button>
 
-<!-- Firebase SDKs -->
+<!-- Firebase SDKs (COMPAT) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -79,17 +79,18 @@ function triggerChaos() {
 
   const chaosText = "CHAOS ACTIVATED BY " + currentPicker;
 
-  // Update shared state
+  // Update shared global state
   db.collection("state").doc("global").set({
     currentPicker: currentPicker,
     activeChaos: chaosText,
-    cooldownUntil: Date.now() + 60000
+    cooldownUntil: Date.now() + 60000 // 1-minute cooldown
   }, { merge: true });
 
-  // Update stats
-  db.collection("stats").doc(currentPicker).update({
-    count: firebase.firestore.FieldValue.increment(1)
-  });
+  // Increment stats for this user
+  db.collection("stats").doc(currentPicker).set({
+    count: firebase.firestore.FieldValue.increment(1),
+    lastActivated: new Date()
+  }, { merge: true });
 
   alert("🔥 " + chaosText + " 🔥");
 }
