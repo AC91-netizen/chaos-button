@@ -14,28 +14,19 @@
       padding: 20px;
     }
 
-    h1 {
-      margin-bottom: 20px;
-    }
-
     button {
       font-size: 1.4em;
       padding: 15px 25px;
       margin: 10px;
-      border: none;
       border-radius: 8px;
+      border: none;
       cursor: pointer;
     }
 
-    .name-btn {
-      background: #333;
-      color: white;
-    }
-
+    .name-btn { background: #333; color: white; }
     #chaosBtn {
       display: none;
       background: red;
-      color: white;
       font-size: 2em;
       margin-top: 30px;
     }
@@ -44,55 +35,65 @@
 
 <body>
 
-  <h1 id="title">WHO ARE YOU?</h1>
+<h1 id="title">WHO ARE YOU?</h1>
 
-  <div id="names">
-    <button class="name-btn" onclick="pick('Dad')">Dad</button>
-    <button class="name-btn" onclick="pick('Mum')">Mum</button>
-    <button class="name-btn" onclick="pick('Dan')">Dan</button>
-    <button class="name-btn" onclick="pick('Nevaeh')">Nevaeh</button>
-    <button class="name-btn" onclick="pick('Arley')">Arley</button>
-    <button class="name-btn" onclick="pick('Colby')">Colby</button>
-  </div>
+<div id="names">
+  <button class="name-btn" onclick="pick('Dad')">Dad</button>
+  <button class="name-btn" onclick="pick('Mum')">Mum</button>
+  <button class="name-btn" onclick="pick('Dan')">Dan</button>
+  <button class="name-btn" onclick="pick('Nevaeh')">Nevaeh</button>
+  <button class="name-btn" onclick="pick('Arley')">Arley</button>
+  <button class="name-btn" onclick="pick('Colby')">Colby</button>
+</div>
 
-  <button id="chaosBtn" onclick="triggerChaos()">🔥 CHAOS 🔥</button>
+<button id="chaosBtn" onclick="triggerChaos()">🔥 CHAOS 🔥</button>
 
-  <!-- Firebase SDKs (COMPAT) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDctCR2xesI471aOuzePR_96SO4RpzR0wk",
-      authDomain: "chaos-engine-family.firebaseapp.com",
-      projectId: "chaos-engine-family",
-      storageBucket: "chaos-engine-family.appspot.com", // ✅ FIXED
-      messagingSenderId: "19846684318",
-      appId: "1:19846684318:web:433a9a16b1c4b7ca6a658f"
-    };
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDctCR2xesI471aOuzePR_96SO4RpzR0wk",
+  authDomain: "chaos-engine-family.firebaseapp.com",
+  projectId: "chaos-engine-family",
+  storageBucket: "chaos-engine-family.appspot.com",
+  messagingSenderId: "19846684318",
+  appId: "1:19846684318:web:433a9a16b1c4b7ca6a658f"
+};
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    let currentPicker = "";
+let currentPicker = "";
 
-    function pick(name) {
-      currentPicker = name;
-      document.getElementById("title").innerText =
-        "IDENTITY CONFIRMED: " + name.toUpperCase();
-      document.getElementById("chaosBtn").style.display = "inline-block";
-    }
+function pick(name) {
+  currentPicker = name;
+  document.getElementById("title").innerText =
+    "IDENTITY CONFIRMED: " + name.toUpperCase();
+  document.getElementById("chaosBtn").style.display = "inline-block";
+}
 
-    function triggerChaos() {
-      if (!currentPicker) return;
+function triggerChaos() {
+  if (!currentPicker) return;
 
-      db.collection("stats").doc(currentPicker).update({
-        count: firebase.firestore.FieldValue.increment(1)
-      });
+  const chaosText = "CHAOS ACTIVATED BY " + currentPicker;
 
-      alert("🔥 CHAOS ACTIVATED BY " + currentPicker + " 🔥");
-    }
-  </script>
+  // Update shared state
+  db.collection("state").doc("global").set({
+    currentPicker: currentPicker,
+    activeChaos: chaosText,
+    cooldownUntil: Date.now() + 60000
+  }, { merge: true });
+
+  // Update stats
+  db.collection("stats").doc(currentPicker).update({
+    count: firebase.firestore.FieldValue.increment(1)
+  });
+
+  alert("🔥 " + chaosText + " 🔥");
+}
+</script>
 
 </body>
 </html>
