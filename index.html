@@ -1,51 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Family Chaos</title>
+  <meta charset="UTF-8">
+  <title>Family Chaos Engine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    body { font-family: Arial; text-align: center; background: #111; color: white; }
-    button { font-size: 1.5em; padding: 20px; margin: 10px; }
-    #chaos { background: red; display: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 1.4em;
+      padding: 15px 25px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .name-btn {
+      background: #333;
+      color: white;
+    }
+
+    #chaosBtn {
+      display: none;
+      background: red;
+      color: white;
+      font-size: 2em;
+      margin-top: 30px;
+    }
   </style>
 </head>
+
 <body>
 
-<h1>WHO ARE YOU?</h1>
+  <h1 id="title">WHO ARE YOU?</h1>
 
-<div id="names">
-  <button onclick="pick('Dad')">Dad</button>
-  <button onclick="pick('Mum')">Mum</button>
-  <button onclick="pick('Dan')">Dan</button>
-  <button onclick="pick('Nevaeh')">Nevaeh</button>
-  <button onclick="pick('Arley')">Arley</button>
-  <button onclick="pick('Colby')">Colby</button>
-</div>
+  <div id="names">
+    <button class="name-btn" onclick="pick('Dad')">Dad</button>
+    <button class="name-btn" onclick="pick('Mum')">Mum</button>
+    <button class="name-btn" onclick="pick('Dan')">Dan</button>
+    <button class="name-btn" onclick="pick('Nevaeh')">Nevaeh</button>
+    <button class="name-btn" onclick="pick('Arley')">Arley</button>
+    <button class="name-btn" onclick="pick('Colby')">Colby</button>
+  </div>
 
-<button id="chaos" onclick="chaos()">🔥 CHAOS 🔥</button>
+  <button id="chaosBtn" onclick="triggerChaos()">🔥 CHAOS 🔥</button>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase SDKs (COMPAT) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<script>
-const firebaseConfig = {
-  // YOU WILL ADD THIS NEXT
-};
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDctCR2xesI471aOuzePR_96SO4RpzR0wk",
+      authDomain: "chaos-engine-family.firebaseapp.com",
+      projectId: "chaos-engine-family",
+      storageBucket: "chaos-engine-family.firebasestorage.app",
+      messagingSenderId: "19846684318",
+      appId: "1:19846684318:web:433a9a16b1c4b7ca6a658f"
+    };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+    // Init Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-let picker = "";
+    let currentPicker = "";
 
-function pick(name) {
-  picker = name;
-  document.getElementById("chaos").style.display = "block";
-}
+    function pick(name) {
+      currentPicker = name;
+      document.getElementById("title").innerText =
+        "IDENTITY CONFIRMED: " + name.toUpperCase();
+      document.getElementById("chaosBtn").style.display = "inline-block";
+    }
 
-function chaos() {
-  alert("CHAOS ACTIVATED BY " + picker);
-}
-</script>
+    function triggerChaos() {
+      if (!currentPicker) return;
+
+      // Increment chaos count
+      db.collection("stats").doc(currentPicker).update({
+        count: firebase.firestore.FieldValue.increment(1)
+      });
+
+      alert("🔥 CHAOS ACTIVATED BY " + currentPicker + " 🔥");
+    }
+  </script>
 
 </body>
 </html>
