@@ -62,17 +62,15 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDctCR2xesI471aOuzePR_96SO4RpzR0wk",
       authDomain: "chaos-engine-family.firebaseapp.com",
       projectId: "chaos-engine-family",
-      storageBucket: "chaos-engine-family.firebasestorage.app",
+      storageBucket: "chaos-engine-family.appspot.com", // ✅ FIXED
       messagingSenderId: "19846684318",
       appId: "1:19846684318:web:433a9a16b1c4b7ca6a658f"
     };
 
-    // Init Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -88,7 +86,6 @@
     function triggerChaos() {
       if (!currentPicker) return;
 
-      // Increment chaos count
       db.collection("stats").doc(currentPicker).update({
         count: firebase.firestore.FieldValue.increment(1)
       });
